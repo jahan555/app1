@@ -1,0 +1,601 @@
+{% extends "garage/base.html" %}
+
+{% csrf_token %}
+{% block content %}
+
+
+
+<body class="font-montserrat">
+
+
+<!-- Page Loader -->
+<div class="page-loader-wrapper">
+    <div class="loader"></div>
+</div>
+
+
+<!--Search body starts-->
+
+<div class="wrapper wrapper--w680">
+    <div class="card card-1">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+                <div class="header-action">
+                    {% csrf_token %}
+                 <!--   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3">
+                        Hesabat
+                    </button> -->
+
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addDriver">
+                        <i class="fe fe-plus mr-2"></i>Yeni sürücü əlavə et
+                    </button>
+
+
+                  <!--   <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2"><i
+                            class="fe fe-plus mr-2"></i>Qısa iş günü əlavə et
+                    </button> -->
+                </div>
+
+                <form method="POST" action="{% url 'garage:filterdriver' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <br>
+                        <div class="input-group">
+                            <input class="input--style-1" name="name" type="text" placeholder="Sürücünün adı">
+                        </div>
+
+                        <div class="input-group">
+                            <input class="input--style-1" name="surname" type="text" placeholder="Sürücünün soyadı">
+                        </div>
+                    <button class="btn-submit" type="submit">Axtar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--Search body ends-->
+
+
+<div id="page_top" class="section-body">
+    <div class="container-fluid">
+        <div class="page-header">
+            <div class="left">
+                <h1 class="page-title">Sürücülər</h1>
+            </div>
+            <div class="right">
+                <div class="notification d-flex">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ <!--
+<div class="section-body">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+            <ul class="nav nav-tabs page-header-tab">
+                <li class="nav-item"><a class="nav-link active" id="Departments-tab" data-toggle="tab"
+                                        href="#Departments-list">İşçilər</a></li>
+            </ul>
+        </div>
+    </div>
+</div> -->
+
+<div class="section-body mt-3">
+    <div class="container-fluid">
+        <div class="tab-content mt-3">
+            <div class="fade show active" id="Departments-list" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"></h3>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                        <div class="tableFixHead">
+                            <table class="table table-striped table-vcenter table-hover mb-0 text-nowrap">
+                                <thead>
+                                <tr>
+                                    <th>Ad Soyad</th>
+                                    <th>Şöbə</th>
+                                    <th>Sürücülük vəsiqəsinin seriyası və nömrəsi</th>
+                                    <th>Etibarlılıq müddəti</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for driver in driversListView %}
+                                    <tr>
+                                        <td>
+                                            <div class="font-15">{{ driver.fullname }}</div>
+                                        </td>
+                                        <td>{{ driver.dep }}</td>
+                                        <td>{{driver.license}}</td>
+                                        <td>{{ driver.date }}</td>
+                                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{driver.updatelicensedash}}">Sürücülük vəsiqəsini yenilə</button></td>
+                                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{driver.editdriverdatadash}}">Redaktə</button></td>
+                                        <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="{{driver.deletedriverdatadash}}">Sil</button></td>
+                                    </tr>
+
+
+                                <!-- Modal change driver licence view-->
+                                <div class="modal fade" id="{{driver.updatelicenseid}}" tabindex="-1" role="dialog" aria-labelledby="changeDriverLicenceLabel"
+                                     aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <form method="POST" action = "{% url 'garage:changeDriverLicenseMethod' driver.id %}" enctype="multipart/form-data">
+                                       {% csrf_token %}
+                                        <div class="modal-content">
+
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="changeDriverLicenceLabel"></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="input-group">
+                                                    <label>Sürücülük vəsiqəsinin seriyası</label>
+                                                    <input class="input--style-1" name="seriya" type="text" placeholder="">
+                                                </div>
+
+                                                <div class="input-group">
+                                                    <label>Sürücülük vəsiqəsinin nömrəsi</label>
+                                                    <input class="input--style-1" name="number" type="text" placeholder="">
+                                                </div>
+
+                                                <div class="input-group">
+                                                    <label>Sürücülük vəsiqəsinin etibarlılıq müddəti</label>
+                                                    <input class="input--style-1" name="date" type="date" placeholder="">
+                                                </div>
+
+
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary">Yadda saxla</button>
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                                            </div>
+                                        </div>
+                                      </form>
+                                    </div>
+                                </div>
+
+                                <!-- Modal edit car row-->
+                                 <div class="modal fade" id="{{driver.editdriverdataid}}" tabindex="-1" role="dialog" aria-labelledby="editdriverdataLabel"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+
+                                                <form method="POST" action = "{% url 'garage:editDriverMethod' driver.id %}" enctype="multipart/form-data">
+                                               {% csrf_token %}
+                                                <div class="modal-content">
+
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="editdriverdata"></h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="input-group">
+                                                        <label> Ad </label>
+                                                        <input class="input--style-1" name="name" type="text" placeholder="{{driver.name}}">
+                                                    </div>
+
+                                                    <div class="input-group">
+                                                        <label> Soyad </label>
+                                                        <input class="input--style-1" name="surname" type="text" placeholder="{{driver.surname}}">
+                                                    </div>
+
+                                                    <div class="input-group">
+                                                        <label> Şöbə </label>
+                                                        <input class="input--style-1" name="dep" type="text" placeholder="{{driver.dep}}">
+                                                    </div>
+
+                                                <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Yadda Saxla</button>
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                                                </div>
+
+                                                </div>
+                                              </form>
+                                            </div>
+                                        </div>
+
+                                <!-- delete driver record -->
+                                 <div class="modal fade" id="{{driver.deletedriverdataid}}" tabindex="-1" role="dialog" aria-labelledby="deletedriverlabel"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{% url 'garage:deleteDriverMethod' driver.id %}"  method="post">
+                                                             {% csrf_token %}
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="deletedriverrecord">{{driver.fullname}} adlı şəxsi silmək</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="modal-body">
+                                                                <div class="row clearfix">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group">
+                                                                            {{driver.fullname}} şəxsin məlumatlarını silməyə əminsinizmi?
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Xeyr</button>
+                                                                <button type="submit" class="btn btn-primary">Bəli</button>
+                                                            </div>
+                                                        </form>
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="section-body">
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-md-6 col-sm-12 text-md-right">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+<!-- Modal add driver view-->
+<div class="modal fade" id="addDriver" tabindex="-1" role="dialog" aria-labelledby="addDriverLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <form method="POST" action = "{% url 'garage:addNewDriverMethod'%}" enctype="multipart/form-data">
+       {% csrf_token %}
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDriverLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="input-group">
+                <label> Sürücünün adı</label>
+                <input class="input--style-1" name="name" type="text" placeholder="">
+            </div>
+            <div class="input-group">
+                <label> Sürücünün soyadı </label>
+                <input class="input--style-1" name="surname" type="text" placeholder="">
+            </div>
+            <div class="input-group">
+                 <label>Şöbə</label>
+                <input class="input--style-1" name="department" type="text" placeholder="">
+            </div>
+            <div class="input-group">
+                <label>Sürücülük vəsiqəsinin seriyası</label>
+                <input class="input--style-1" name="seriya" type="text" placeholder="">
+            </div>
+
+            <div class="input-group">
+                 <label>Sürücülük vəsiqəsinin nömrəsi</label>
+                <input class="input--style-1" name="number" type="text" placeholder="">
+            </div>
+
+            <div class="input-group">
+                <div class="p-t-5">
+                    <label>Sürücülük vəsiqəsinin etibarlılıq müddəti</label>
+                    <input class="input--style-1" name="date" type="date" placeholder="">
+                </div>
+            </div>
+            <div class="modal-footer">
+<!--                <button type="submit" class="btn btn-primary">Çıxarış</button>-->
+                <button type="submit" class="btn btn-primary">Əlavə et</button>
+<!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>-->
+            </div>
+        </div>
+      </form>
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+
+<form action="#" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Yeni avtomobil əlavə et</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix">
+
+               <!--     <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Səbəb">
+                                <option>İşçini seçin</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="date" name="date" class="form-control" id="datepicker-5" placeholder="Tarix">
+
+                            </div>
+                    </div>-->
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="hour1" class="form-control" placeholder="Marka">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="hour2" class="form-control" placeholder="Model">
+                        </div>
+                    </div>
+
+                <!--    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="reason" class="form-control" placeholder="Səbəb">
+                                <option>İş səbəbi ilə</option>
+                                <option>Şəxsi</option>
+                            </select>
+                        </div>
+                    </div>-->
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="note" class="form-control" placeholder="Seriya və nömrəsi">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="note" class="form-control" placeholder="Buraxılış ili">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="note" class="form-control" placeholder="Ban nömrəsi">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="note" class="form-control" placeholder="Mühərrikin həcmi">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <input type="submit" value="Yadda saxla" class="btn btn-primary"></input>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="#"  method="post">
+                {% csrf_token %}
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Avtomobili təhkim et</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Sürücü">
+                                <option>Sürücünü seçin</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Sürücü">
+                                <option>Avtomobilin seriya və nömrəsini seçin</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "date" class="form-control" id="datepicker-5" placeholder="Tarix">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                <button type="submit" class="btn btn-primary">Yadda saxla</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="temir" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="#"  method="post">
+                {% csrf_token %}
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Təmir tarixçəsi əlavə et</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="row clearfix">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Sürücü">
+                                <option>Avtomobilin seriya və nömrəsini seçin</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Servis mərkəzi">
+                                <option>Toyota Absheron</option>
+                                <option>Avto Universal</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "date" class="form-control" id="datepicker-5" placeholder="Tarix">
+                        </div>
+                    </div>
+                     <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "text" class="form-control" id="datepicker-5" placeholder="Görülən iş">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "text" class="form-control" id="datepicker-5" placeholder="Xərc">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                <button type="submit" class="btn btn-primary">Yadda saxla</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="yanacaq" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="#"  method="post">
+                {% csrf_token %}
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Yanacaq limitləri</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="row clearfix">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Sürücü">
+                                <option>Avtomobilin seriya və nömrəsini seçin</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Servis mərkəzi">
+                                <option>Toyota Absheron</option>
+                                <option>Avto Universal</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "date" class="form-control" id="datepicker-5" placeholder="Tarix">
+                        </div>
+                    </div>
+                     <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "text" class="form-control" id="datepicker-5" placeholder="Görülən iş">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "text" class="form-control" id="datepicker-5" placeholder="Xərc">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                <button type="submit" class="btn btn-primary">Yadda saxla</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+</body>
+</html>
+{% endblock content %}

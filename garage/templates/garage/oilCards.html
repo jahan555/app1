@@ -1,0 +1,575 @@
+{% extends "garage/base.html" %}
+
+{% csrf_token %}
+{% block content %}
+
+
+
+<body class="font-montserrat">
+
+
+<!-- Page Loader -->
+<div class="page-loader-wrapper">
+    <div class="loader"></div>
+</div>
+
+
+<!--Search body starts-->
+
+<div class="wrapper wrapper--w680">
+    <div class="card card-1">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+                <div class="header-action">
+                    {% csrf_token %}
+
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addOilCard">
+                        <i class="fe fe-plus mr-2"></i>Yanacaq kartı əlavə et
+                    </button>
+                    <button class="btn btn-primary" style = "margin-top: 10px;" data-toggle="modal" data-target="#assignOilCardToCar">
+                        <i class="fe fe-plus mr-2"></i>Yanacaq kartını avtomobilə təhkim et
+                    </button>
+                </div>
+
+                <form method="POST" action="{% url 'garage:filteroilcard' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <br>
+                        <div class="input-group">
+                            <input class="input--style-1" name="cardnumber" type="text" placeholder="Kart nömrəsi">
+                        </div>
+                    <button class="btn-submit" type="submit">Axtar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--Search body ends-->
+
+
+<div id="page_top" class="section-body">
+    <div class="container-fluid">
+        <div class="page-header">
+            <div class="left">
+                <h1 class="page-title">Yanacaq kartları</h1>
+            </div>
+            <div class="right">
+                <div class="notification d-flex">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ <!--
+<div class="section-body">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+            <ul class="nav nav-tabs page-header-tab">
+                <li class="nav-item"><a class="nav-link active" id="Departments-tab" data-toggle="tab"
+                                        href="#Departments-list">İşçilər</a></li>
+            </ul>
+        </div>
+    </div>
+</div> -->
+
+<div class="section-body mt-3">
+    <div class="container-fluid">
+        <div class="tab-content mt-3">
+            <div class="fade show active" id="Departments-list" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"></h3>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                        <div class="tableFixHead">
+                            <table class="table table-striped table-vcenter table-hover mb-0 text-nowrap">
+                                <thead>
+                                <tr>
+                                    <th>Kartın nömrəsi</th>
+                                    <th>Kartı limiti</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for card in petrolcardListView %}
+                                    <tr>
+                                        <td>
+                                            <div class="font-15">{{ card.number }}</div>
+                                        </td>
+                                        <td>{{ card.limit }}</td>
+                                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{card.changelimitpopupdash}}">Limiti dəyiş</button></td>
+                                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{card.limithistorypopupdash}}">Limit tarixçəsi</button></td>
+                                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{card.assignhistorypopupdash}}">Təhkim tarixçəsi</button></td>
+                                        <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="{{card.deletecarddash}}">Sil</button></td>
+                                    </tr>
+
+                                    <!-- Modal change Oil Card Limit Hesabat-->
+                                    <div class="modal fade" id="{{card.changelimitpopupid}}" tabindex="-1" role="dialog" aria-labelledby="changeOilCardLimitLabel"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <form method="POST" action = "{% url 'garage:changeOilCardLimitMethod' card.id %}" enctype="multipart/form-data">
+                                           {% csrf_token %}
+                                            <div class="modal-content">
+
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="changeOilCardLimitLabel">Yanacaq kartının limitini dəyiş:</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="input-group">
+                                                    <label>Yeni limiti daxil edin: </label>
+                                                    <input class="input--style-1" name="limit" type="number" placeholder="">
+                                                </div>
+
+
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Yadda Saxla</button>
+                                    <!--                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>-->
+                                                </div>
+                                            </div>
+                                          </form>
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal history of limit Oil Card-->
+                                    <div style="width=900px;" class="modal fade" id="{{card.limithistorypopupid}}" tabindex="-1"  aria-labelledby="limithistorypopupdLabel"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="#"  method="post">
+                                                            {% csrf_token %}
+
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="limithistorypopupdid">Yanacaq kartının limit tarixçəsi</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            {% for limit in card.limithistorylist2 %}
+    <!--                                                            <h4>{{repair.date}} tarixində {{repair.desc}}  (Servis: {{repair.service}})</h4>-->
+                                                            <h4>{{limit}}</h4>
+                                                            {%endfor%}
+
+
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+    <!--                                                        <button type="submit" class="btn btn-primary">Yadda saxla</button>button-->
+                                                        </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                    </div>
+
+                                    <!-- Modal log of assignment Oil Card-->
+                                    <div style="width=900px;" class="modal fade" id="{{card.assignhistorypopupid}}" tabindex="-1"  aria-labelledby="assignhistorypopupLabel"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="#"  method="post">
+                                                            {% csrf_token %}
+
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="assignhistorypopup">Yanacaq kartının təhkim tarixçəsi</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            {% for assign in card.assignhistorylist2 %}
+    <!--                                                            <h4>{{repair.date}} tarixində {{repair.desc}}  (Servis: {{repair.service}})</h4>-->
+                                                                    <h4>{{assign}}</h4>
+                                                            {%endfor%}
+
+
+                                                        </div>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+    <!--                                                        <button type="submit" class="btn btn-primary">Yadda saxla</button>button-->
+                                                        </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                    </div>
+
+                                    <!-- delete oil card record -->
+                                    <div class="modal fade" id="{{card.deletecardid}}" tabindex="-1" role="dialog" aria-labelledby="deletecardlabel"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{% url 'garage:deleteCardMethod' card.id %}"  method="post">
+                                                             {% csrf_token %}
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="deletecardid">{{card.number}}nömrəli yanacaq kartını silmək</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="modal-body">
+                                                                <div class="row clearfix">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group">
+                                                                            {{card.number}} nömrəli yanacaq kartının məlumatlarını silməyə əminsinizmi?
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Xeyr</button>
+                                                                <button type="submit" class="btn btn-primary">Bəli</button>
+                                                            </div>
+                                                        </form>
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="section-body">
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-md-6 col-sm-12 text-md-right">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+<!-- Modal Add new oil card -->
+<div class="modal fade" id="addOilCard" tabindex="-1" role="dialog" aria-labelledby="addOilCardLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <form method="POST" action = "{% url 'garage:addOilCardMethod' %}" enctype="multipart/form-data">
+       {% csrf_token %}
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="addOilCardLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="input-group">
+                <label> Kart nömrəsi </label>
+                <input class="input--style-1" name="number" type="text" placeholder="">
+            </div>
+
+            <div class="input-group">
+                <label>Limiti</label>
+                <input class="input--style-1" name="limit" type="text" placeholder="">
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Əlavə et</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+            </div>
+        </div>
+      </form>
+    </div>
+</div>
+
+<!-- Modal change Oil Card Limit Hesabat-->
+<!--<div class="modal fade" id="changeOilCardLimit" tabindex="-1" role="dialog" aria-labelledby="changeOilCardLimitLabel"-->
+<!--     aria-hidden="true">-->
+<!--    <div class="modal-dialog" role="document">-->
+<!--        <form method="POST" action = "{% url 'garage:addOilCardMethod' %}" enctype="multipart/form-data">-->
+<!--       {% csrf_token %}-->
+<!--        <div class="modal-content">-->
+
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title" id="changeOilCardLimitLabel">Yanacaq kartının limitini dəyiş:</h5>-->
+<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>-->
+<!--                </button>-->
+<!--            </div>-->
+
+<!--            <div class="input-group">-->
+<!--                <input class="input&#45;&#45;style-1" name="date1" type="number" placeholder="">-->
+<!--            </div>-->
+
+
+<!--            <div class="modal-footer">-->
+<!--                <button type="submit" class="btn btn-primary">Yadda Saxla</button>-->
+<!--&lt;!&ndash;                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>&ndash;&gt;-->
+<!--            </div>-->
+<!--        </div>-->
+<!--      </form>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!-- Modal view Oil Card History-->
+
+<form action="#" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<div class="modal fade" id="viewOilCardHistory" tabindex="-1" role="dialog" aria-labelledby="viewOilCardHistoryLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewOilCardHistoryLabel">1212121212 nömrəli kartın limit tarixçəsi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <div class="col-md-12">
+                            <div class="table-responsive">
+                                <div class="tableFixHead">
+                                    <table class="table table-striped table-vcenter table-hover mb-0 text-nowrap">
+                                        <thead>
+                                        <tr>
+                                            <th>Kartın nömrəsi</th>
+                                            <th>Kartın limiti</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="font-15">1212121212</div>
+                                                </td>
+                                                <td>500</td>
+
+                                            </tr>
+                                        {% for row in excel_data %}
+                                            <tr>
+                                                <td>
+                                                    <div class="font-15">{{ row.fullname }}</div>
+                                                </td>
+                                                <td>{{ row.date }}</td>
+
+                                            </tr>
+
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+
+                                 </div>
+                            </div>
+
+                        <div class="modal-footer">
+                            <input type="submit" value="Yadda saxla" class="btn btn-primary">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        </div>
+    </div>
+</div>
+</form>
+
+<!-- Modal Assign oil Card to car  -->
+<div class="modal fade" id="assignOilCardToCar" tabindex="-1" role="dialog" aria- belledby="assignOilCardToCarLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action = "{% url 'garage:assignOilCardToCarMethod' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignOilCardToCarLabel">Yanacaq kartını avtomobilə təhkim et: </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <select name="carid" class="form-control" placeholder="Sürücü">
+                                    <option>Avtomobilin DQN seçin</option>
+                                    {% for car in cars %}
+                                        <option value=" {{ car.id }} "> {{car.registered_number}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select name="cardid" class="form-control" placeholder="Yanacaq kartı">
+                                    <option>Kart nömrəsini seçin</option>
+                                    {% for card in cards %}
+                                        <option value="{{ card.id }}"> {{card.card_number}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                    <button type="submit" class="btn btn-primary">Yadda saxla</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="temir" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="#"  method="post">
+                {% csrf_token %}
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Təmir tarixçəsi əlavə et</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="row clearfix">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Sürücü">
+                                <option>Avtomobilin seriya və nömrəsini seçin</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Servis mərkəzi">
+                                <option>Toyota Absheron</option>
+                                <option>Avto Universal</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "date" class="form-control" id="datepicker-5" placeholder="Tarix">
+                        </div>
+                    </div>
+                     <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "text" class="form-control" id="datepicker-5" placeholder="Görülən iş">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "text" class="form-control" id="datepicker-5" placeholder="Xərc">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                <button type="submit" class="btn btn-primary">Yadda saxla</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="yanacaq" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="#"  method="post">
+                {% csrf_token %}
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Yanacaq limitləri</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="row clearfix">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Sürücü">
+                                <option>Avtomobilin seriya və nömrəsini seçin</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <select name="staffname" class="form-control" placeholder="Servis mərkəzi">
+                                <option>Toyota Absheron</option>
+                                <option>Avto Universal</option>
+                                {% for name in names %}
+                                    <option>{{name.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "date" class="form-control" id="datepicker-5" placeholder="Tarix">
+                        </div>
+                    </div>
+                     <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "text" class="form-control" id="datepicker-5" placeholder="Görülən iş">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="date" name = "text" class="form-control" id="datepicker-5" placeholder="Xərc">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                <button type="submit" class="btn btn-primary">Yadda saxla</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+{% endblock content %}

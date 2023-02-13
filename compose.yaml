@@ -1,0 +1,9 @@
+services:
+   djangocahan:
+     restart: on-failure
+     image: mydjap:version11
+     container_name: app1
+     build: ./
+     ports:
+     - '8000:8000'
+   

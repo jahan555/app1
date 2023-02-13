@@ -1,0 +1,645 @@
+{% extends "garage/base.html" %}
+
+{% csrf_token %}
+{% block content %}
+
+
+
+<body class="font-montserrat">
+
+
+<!-- Page Loader -->
+<div class="page-loader-wrapper">
+    <div class="loader"></div>
+</div>
+
+
+<!--Search body starts-->
+
+<div class="wrapper wrapper--w680">
+    <div class="card card-1">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+                <div class="header-action">
+                    {% csrf_token %}
+                 <!--   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal3">
+                        Hesabat
+                    </button> -->
+
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addCar">
+                        <i class="fe fe-plus mr-2"></i>Avtomobil əlavə et
+                    </button>
+
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#assignDriver">
+                        <i class="fe fe-plus mr-2"></i>Avtomobili təhkim et
+                    </button>
+
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#repair" style = "margin-top:5px;">
+                        <i class="fe fe-plus mr-2"></i>Təmir əlavə et
+                    </button>
+                    </br>
+                    <form  style="margin-top:5px;" action="{% url 'garage:hesabat'  %}"  method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Hesabat</button>
+                    </form>
+<!--                    <button class="btn btn-primary"  data-toggle="modal" data-target="#hesabat" style = "margin-top:5px;">-->
+<!--                        <i class="fe fe-plus mr-2"></i>Hesabat-->
+<!--                    </button>-->
+
+
+                </div>
+
+                <form method="POST" action="{% url 'garage:filtercar' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <br>
+                        <div class="input-group">
+                            <input class="input--style-1" name="marka" type="text" placeholder="Marka">
+                        </div>
+
+                        <div class="input-group">
+                            <input class="input--style-1" name="model" type="text" placeholder="Model">
+                        </div>
+
+                        <div class="input-group">
+                            <input class="input--style-1" name="number" type="text" placeholder="Nömrə">
+                        </div>
+                    <button class="btn-submit" type="submit">Axtar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--Search body ends-->
+
+
+<div id="page_top" class="section-body">
+    <div class="container-fluid">
+        <div class="page-header">
+            <div class="left">
+                <h1 class="page-title">Avtomobillər</h1>
+            </div>
+            <div class="right">
+                <div class="notification d-flex">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ <!--
+<div class="section-body">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+            <ul class="nav nav-tabs page-header-tab">
+                <li class="nav-item"><a class="nav-link active" id="Departments-tab" data-toggle="tab"
+                                        href="#Departments-list">İşçilər</a></li>
+            </ul>
+        </div>
+    </div>
+</div> -->
+
+<div class="section-body mt-3">
+    <div class="container-fluid">
+        <div class="tab-content mt-3">
+            <div class="fade show active" id="Departments-list" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"></h3>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                        <div class="tableFixHead">
+                            <table class="table table-striped table-vcenter table-hover mb-0 text-nowrap">
+                                <thead>
+                                <tr>
+                                    <th>Marka</th>
+                                    <th>Model</th>
+                                    <th>Seriya və nömrə</th>
+                                    <th>Şöbə</th>
+                                    <th>Mühərrikin həcmi</th>
+                                    <th>İl</th>
+                                    <th>BAN nömrəsi</th>
+                                    <th>Sürücü</th>
+                                    <th>Təhkim tarixi</th>
+                                    <th>Yürüş</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {% for car in car_listview %}
+
+                                    <tr>
+                                        <td>
+                                            <div class="font-15">{{ car.marka }}</div>
+                                        </td>
+                                        <td>{{ car.model }}</td>
+                                        <td>{{ car.number }}</td>
+                                        <td>{{ car.dep }}</td>
+                                        <td>{{ car.engine }}</td>
+                                        <td>{{ car.year }}</td>
+                                        <td>{{ car.ban }}</td>
+                                        <td>{{ car.driver }}</td>
+                                        <td>{{ car.date }}</td>
+<!--                                        <td>{{ car.milestage }}</td>-->
+                                        <td><button type="button" data-toggle="modal" data-target="{{car.milestagehistorypopupdash}}">{{ car.milestage }}</button></td>
+                                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{car.oilcardpopupiddash}}">Yanacaq kartı</button></td>
+                                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{car.milestagepopupiddash}}">Yürüşü yenilə</button></td>
+                                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{car.repairhistorypopupiddash}}">Təmir tarixçəsinə bax</button></td>
+                                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="{{car.editcardatapopupiddash}}">Redaktə</button></td>
+                                        <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="{{car.deletecariddash}}">Sil</button></td>
+                                    </tr>
+
+                                        <!-- Modal view history of milestage popup -->
+                                        <div style="width=900px;" class="modal fade" id="{{car.milestagehistorypopupid}}" tabindex="-1"  aria-labelledby="viewHistoryMilestageLabel"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <form action="#"  method="post">
+                                                        {% csrf_token %}
+
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="viewHistoryMilestageId">Avtomobilin yürüş tarixçəsi</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        {% for mile in car.milestagehistory %}
+<!--                                                            <h4>{{repair.date}} tarixində {{repair.desc}}  (Servis: {{repair.service}})</h4>-->
+                                                        <h4>{{mile}}</h4>
+                                                        {%endfor%}
+
+
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+<!--                                                        <button type="submit" class="btn btn-primary">Yadda saxla</button>button-->
+                                                    </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Update Milestage pop-up on Cars view-->
+                                        <div class="modal fade" id="{{car.milestagepopupid}}" tabindex="-1" role="dialog" aria-labelledby="updateMileStageLabel"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <form method="POST" action = "{% url 'garage:addmilestageMethod' car.id %}" enctype="multipart/form-data">
+                                               {% csrf_token %}
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="updateMileStageLabel">Yürüşü yenilə</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label>Yürüşü daxil et: </label>
+                                                            <input type="number" class="form-control" name="milestage" placeholder="Yürüşü daxil et">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label>Yenilənən tarix: </label>
+                                                            <input type="date" class="form-control" name="datemilestage" placeholder="Yenilənən tarix">
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                             <button type="submit" class="btn btn-primary">Yadda saxla</button>
+                                                    </div>
+                                                </div>
+                                              </form>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal Oil Card on Cars view-->
+                                        <div class="modal fade" id="{{car.oilcardpopupid}}" tabindex="-1" role="dialog" aria-labelledby="oilCardCarsLabel"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <form method="POST" action = '#' enctype="multipart/form-data">
+                                               {% csrf_token %}
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="oilCardCarsLabel">Yanacaq kartı haqqında məlumat</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <label> Yanacaq kartının nömrəsi: {{car.petrolcardnumber}}</label>
+                                                    </div>
+                                                    <div class="input-group">
+                                                        <label> Yanacaq kartının limiti: {{car.petrolcardlimit}} </label>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                        <!--                <button type="submit" class="btn btn-primary">Çıxarış</button>-->
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                                                    </div>
+                                                </div>
+                                              </form>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal view repair records of the car view -->
+                                        <div style="width=900px;" class="modal fade" id="{{car.repairhistorypopupid}}" tabindex="-1"  aria-labelledby="viewHistoryCarsLabel"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <form action="#"  method="post">
+                                                        {% csrf_token %}
+
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="viewHistoryCars">Avtomobilin təmir tarixçəsi</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        {% for repair in car.repairhistorylist2 %}
+<!--                                                            <h4>{{repair.date}} tarixində {{repair.desc}}  (Servis: {{repair.service}})</h4>-->
+                                                        <h4>{{repair}}</h4>
+                                                        {%endfor%}
+
+
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+<!--                                                        <button type="submit" class="btn btn-primary">Yadda saxla</button>button-->
+                                                    </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal edit car row-->
+                                        <div class="modal fade" id="{{car.editcardatapopupid}}" tabindex="-1" role="dialog" aria-labelledby="editcardatapopupLabel"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+
+                                                <form method="POST" action = "{% url 'garage:editCarMethod' car.id %}" enctype="multipart/form-data">
+                                               {% csrf_token %}
+                                                <div class="modal-content">
+
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="editcardatapopup"></h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="input-group">
+                                                        <label> Marka </label>
+                                                        <input class="input--style-1" name="marka" type="text" placeholder="{{car.marka}}">
+                                                    </div>
+
+                                                    <div class="input-group">
+                                                        <label>Model</label>
+                                                        <input class="input--style-1" name="model" type="text" placeholder="{{car.model}}">
+                                                    </div>
+
+                                                    <div class="input-group">
+                                                         <label>Seriya və nömrə</label>
+                                                         <input class="input--style-1" name="number" type="text" placeholder="{{car.number}}">
+                                                    </div>
+
+                                                    <div class="input-group">
+                                                         <label>Mühərrikin həcmi</label>
+                                                         <input class="input--style-1" name="engine" type="text" placeholder="{{car.engine}}">
+                                                    </div>
+                                                    <div class="input-group">
+                                                         <label>İl</label>
+                                                         <input class="input--style-1" name="year" type="text" placeholder="{{car.year}}">
+                                                    </div>
+                                                    <div class="input-group">
+                                                         <label>BAN nömrəsi</label>
+                                                         <input class="input--style-1" name="ban" type="text" placeholder="{{car.ban}}">
+                                                    </div>
+                                                    <div class="input-group">
+                                                         <label>Şöbə</label>
+                                                         <input class="input--style-1" name="dep" type="text" placeholder="{{car.dep}}">
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Yadda Saxla</button>
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                                                    </div>
+                                                </div>
+                                              </form>
+                                            </div>
+                                        </div>
+
+                                        <!-- delete car record -->
+                                        <div class="modal fade" id="{{car.deletecarid}}" tabindex="-1" role="dialog" aria-labelledby="deletecarlabel"
+                                                 aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <form action="{% url 'garage:deleteCarMethod' car.id %}"  method="post">
+                                                             {% csrf_token %}
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="deletecarrecord">{{car.number}} DQN-lı avtomobili silmək</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="modal-body">
+                                                                <div class="row clearfix">
+                                                                    <div class="col-md-12">
+                                                                        <div class="form-group">
+                                                                            {{car.marka}} markalı {{car.number}} DQN-lı avtomobilin məlumatlarını silməyə əminsinizmi?
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Xeyr</button>
+                                                                <button type="submit" class="btn btn-primary">Bəli</button>
+                                                            </div>
+                                                        </form>
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="section-body">
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-md-6 col-sm-12 text-md-right">
+
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+
+<!-- Modal Add car view -->
+
+<form action="{% url 'garage:addCarMethod' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<div class="modal fade" id="addCar" tabindex="-1" role="dialog" aria-labelledby="addCarLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCarLabel">Yeni avtomobil əlavə et</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row clearfix">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="marka" class="form-control" placeholder="Marka">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="model" class="form-control" placeholder="Model">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="number" class="form-control" placeholder="Seriya və nömrəsi">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="year" class="form-control" placeholder="Buraxılış ili">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="ban" class="form-control" placeholder="Ban nömrəsi">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="engine" class="form-control" placeholder="Mühərrikin həcmi">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" name="dep" class="form-control" placeholder="Aid olduğu şöbə">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="modal-footer">
+                <input type="submit" value="Yadda saxla" class="btn btn-primary">
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+<!-- Modal Assign Driver to a Car view-->
+<div class="modal fade" id="assignDriver" tabindex="-1" role="dialog" aria-labelledby="assignDriverLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{% url 'garage:assignCarMethod'  %}"  method="post">
+                {% csrf_token %}
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assignDriverLabel">Avtomobili təhkim et</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+
+                <div class="modal-body">
+                    <div class="row clearfix">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Sürücünü seçin</label>
+                                <select name="driverid" class="form-control" placeholder="Sürücü">
+                                    {% for driver in drivers %}
+                                        <option value="{{ driver.id }}">{{driver.name}} {{driver.surname}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Avtomobilin seriya və nömrəsini seçin</label>
+                                <select name="carid" class="form-control" placeholder="Avtomobil">
+                                    {% for car in cars %}
+                                        <option value="{{ car.id }}">{{car.registered_number}} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="date" name = "date" class="form-control" id="datepi" placeholder="Tarix">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                    <button type="submit" class="btn btn-primary">Yadda saxla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Add repair record view -->
+<div class="modal fade" id="repair" tabindex="-1" role="dialog" aria-labelledby="repairLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form action="{% url 'garage:addRepairLogMethod' %}"  method="post">
+                {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title" id="repairLabel">Təmir tarixçəsi əlavə et</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row clearfix">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Avtomobilin seriya və nömrəsini seçin:</label>
+                            <select name="carid" class="form-control" placeholder="avtomobil">
+                                {% for car in cars %}
+                                    <option value = "{{car.id}}">{{car.registered_number}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Təmir olunduğu tarixi seçin</label>
+                            <input type="date" name = "date" class="form-control" id="5" placeholder="Tarix">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Təmir olunduğu servis mərkəzini seçin</label>
+                            <select name="serviceid" class="form-control" placeholder="Servis mərkəzi">
+                                {% for service in services %}
+                                    <option value="{{service.id}}">{{service.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Kateqoriyanı seçin</label>
+                            <select name="categoryid" class="form-control" placeholder="Servis kateqoriyası">
+                                {% for category in categories %}
+                                    <option value="{{category.id}}">{{category.category_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Təmirdə görülən işləri yazın: </label>
+                            <input type="textarea" name = "desc" class="form-control" id="4" placeholder="">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Yekun xərci yazın:</label>
+                            <input type="number" name = "price" class="form-control" id="6" placeholder="Xərc">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>
+                <button type="submit" class="btn btn-primary">Yadda saxla</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Turniket Modal Hesabat-->
+<!--<div class="modal fade" id="hesabat" tabindex="-1" role="dialog" aria-labelledby="hesabatLabel"-->
+<!--     aria-hidden="true">-->
+<!--    <div class="modal-dialog" role="document">-->
+<!--        <div class="modal-content">-->
+<!--            <form action="{% url 'garage:hesabat'  %}"  method="post">-->
+<!--                {% csrf_token %}-->
+
+<!--                <div class="modal-header">-->
+<!--                    <h5 class="modal-title" id="hesabatID">Avtomobili təhkim et</h5>-->
+<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>-->
+<!--                    </button>-->
+<!--                </div>-->
+
+
+<!--                <div class="modal-body">-->
+<!--                    <div class="row clearfix">-->
+<!--                        <div class="col-md-12">-->
+<!--                            <div class="form-group">-->
+<!--                                <p>Bir neçə dəqiqə ərzində hesabat yüklənəcək...</p>-->
+
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Bağla</button>-->
+<!--                    <button type="submit" class="btn btn-primary">Yadda saxla</button>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+</body>
+</html>
+{% endblock content %}
+
+
+
